@@ -1,26 +1,83 @@
+<!DOCTYPE HTML>
 <html>
-<body>
-<h1>test</h1>
-<img id="myImg" src="compman.gif" width="200" height="200">
-<button onClick = "uplo()">Next &raquo;</button>
-<script src="/socket.io/socket.io.js"></script>
-<script src="https://code.jquery.com/jquery-1.11.1.js"></script>
-    
-<script>
-    
-    var socket = io.connect();
-    
-    function uplo(){
-        socket.emit("reqimage", "Robbie");
-    }
-    
-    socket.on('fid', function (val) {
-        document.getElementById("myImg").src = "https://image1213.s3.us-east-2.amazonaws.com/" + val;
-    });
-    
-    
-    
-</script> 
+	<head>
+		<title>CredID</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<!--[if lte IE 8]><script src="assets/js/html5shiv.js"></script><![endif]-->
+		<link rel="stylesheet" href="assets/css/style.css" />
+		<!--[if lte IE 9]><link rel="stylesheet" href="assets/css/ie9.css" /><![endif]-->
+		<!--[if lte IE 8]><link rel="stylesheet" href="assets/css/ie8.css" /><![endif]-->
+		<link rel="icon" href="img/credidicon.png" >
 
-</body>
+      <style>
+      /* NOTE: The styles were added inline because Prefixfree needs access to your styles and they must be inlined if they are on local disk! */
+      @import 'https://fonts.googleapis.com/css?family=Roboto+Mono:100';
+html,
+p {
+  font-family: 'Roboto Mono', monospace;
+
+}
+.container {
+  height: 100%;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+}
+.text {
+  font-weight: 100;
+  font-size: 20px;
+  color: #000;
+}
+.dud {
+  color: #a5a5a5;
+}
+
+    </style>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prefixfree/1.0.7/prefixfree.min.js"></script>
+
+</head>
+
+	<body class="is-loading">
+
+			<div id="wrapper">
+
+				<!-- Main -->
+					<section id="main">
+						<header>
+							<span class="avatar"><img src="img/credidicon.png" alt="" /></span>
+							<h1>CredID</h1>
+
+							<p>  <div class="container">
+							  <div class="text"> Digital Identity stored on Ethereum. <br> Immediate access to Financial Services. </div>
+							  </div>
+
+							</p>
+
+						</header>
+
+						<footer>
+							<ul class="icons">
+								<button onclick="window.location.href = 'signup.html'">Start Now!</button>
+							</ul>
+						</footer>
+					</section>
+
+				<!-- Footer -->
+					<footer id="footer">
+						<ul class="copyright">
+							<li>&copy; CredID</li>
+						</ul>
+					</footer>
+
+			<script>
+				if ('addEventListener' in window) {
+					window.addEventListener('load', function() { document.body.className = document.body.className.replace(/\bis-loading\b/, ''); });
+					document.body.className += (navigator.userAgent.match(/(MSIE|rv:11\.0)/) ? ' is-ie' : '');
+				}
+
+			</script>
+	</body>
 </html>

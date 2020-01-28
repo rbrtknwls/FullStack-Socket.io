@@ -8,9 +8,9 @@ for word1 in list1:
     for word2 in list2:
         wordFromList1 = wordnet.synsets(word1)
         wordFromList2 = wordnet.synsets(word2)
-        if wordFromList1 and wordFromList2: #Thanks to @alexis' note
+        if wordFromList1 and wordFromList2:
             s = wordFromList1[0].wup_similarity(wordFromList2[0])
-            list3.append(word1 + " " + str(s))
+            list3.append(word1 + "vs" +word2 + " "+ str(s))
 
 for thing in list3:
     print(thing)

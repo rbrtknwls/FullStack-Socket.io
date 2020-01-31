@@ -1,16 +1,15 @@
-var app = require('express')();
-var http = require('http').createServer(app);
-var io = require('socket.io')(http);
+var express = require('express');
+var socketIO = require('socket.io');
+const PORT = process.env.PORT || 3000;
+const INDEX = '/index.html';
 
-var usernames = {};
+const server = express()
+  .use((req, res) => res.sendFile(INDEX, { root: __dirname }))
+  .listen(PORT, () => console.log(`Listening on ${PORT}`));
 
-http.listen(3000, function(){
-  console.log('listening on *:3000');
-});
+const io = socketIO(server);
 
-app.get('/', function(req, res){
-  res.sendfile('index.html');
-});
+usernames = {}
 
 function disname(dic){
     console.log("--- nit ---")
@@ -48,8 +47,7 @@ io.on('connection', function(socket){
         for (var key in usernames) {
             // check if the property/key is defined in the object itself, not in parent
             if (usernames.hasOwnProperty(key)) {     
-                console.log(usernames[key]);
-                io.emit('serv-so', usernames[key]);
+                io.emit('serv-so', usernames);
             }
         }
         

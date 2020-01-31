@@ -52,11 +52,16 @@ Your browser does not support the HTML5 canvas tag.</canvas>
     }, 16);
     
     socket.on('serv-so', function (arr) {
-        ctx.fillStyle = arr[2];
-        ctx.beginPath();
-        ctx.arc(arr[0], arr[1], 50, 0, 2 * Math.PI);
-        ctx.stroke();
-        ctx.fill();
+        ctx.clearRect(0,0,500,500);
+        for (var key in arr) {
+            ctx.fillStyle = arr[key][2];
+            ctx.beginPath();
+            ctx.arc(arr[key][0], arr[key][1], 50, 0, 2 * Math.PI);
+            ctx.stroke();
+            ctx.fill();
+        }
+        
+        
     });
     
     

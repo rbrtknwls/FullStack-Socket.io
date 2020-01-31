@@ -1,0 +1,66 @@
+<html>
+<body>
+
+<canvas id="myCanvas" width="500" height="500" style="border:1px solid #d3d3d3;">
+Your browser does not support the HTML5 canvas tag.</canvas>
+    
+<script src="/socket.io/socket.io.js"></script>
+<script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+    
+<script>
+    var socket = io.connect();
+    
+    var c = document.getElementById("myCanvas");
+    var ctx = c.getContext("2d");
+    
+    var x = 200;
+    var y = 200;
+    
+    var nx = 200;
+    var ny = 200;
+    
+    dir = 'none';
+    
+    myCanvas.onmousemove = function (){
+        nx = window.event.clientX;
+        ny = window.event.clientY;
+    }
+    
+    function findp(){
+        if (nx-x != 0 && ny-y != 0){
+            var mag = Math.sqrt((ny - y)*(ny - y) + (nx - x)*(nx - x))/5
+            if (nx > 0 && Math.abs(nx-x) >5){
+                x += (nx - x)/mag;
+            }
+            if (ny > 0 && Math.abs(ny-y) >5){
+                y += (ny - y)/mag;
+            }
+        }
+        
+        
+    }
+    
+    setInterval(function(){ 
+        
+        
+        
+        findp();
+        socket.emit("soserv", socket.id, x, y);
+        
+        
+        
+    }, 16);
+    
+    socket.on('serv-so', function (arr) {
+        ctx.fillStyle = arr[2];
+        ctx.beginPath();
+        ctx.arc(arr[0], arr[1], 50, 0, 2 * Math.PI);
+        ctx.stroke();
+        ctx.fill();
+    });
+    
+    
+</script> 
+
+</body>
+</html>

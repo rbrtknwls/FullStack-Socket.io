@@ -2,14 +2,23 @@
 <body>
 <h1>test</h1>
 <img id="myImg" src="compman.gif" width="200" height="200">
+<button onClick = "prev()">&laquo; Previous</button>
+<button onClick = "forw()">Next &raquo;</button>
 <script src="/socket.io/socket.io.js"></script>
 <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
     
 <script>
     
     var socket = io.connect();
-     
-    
+    var x = 0
+    function prev() {
+        x--;
+        socket.emit("reqimage", x);
+    }
+    function forw() {
+        x++;
+        socket.emit("reqimage", x);
+    }
     socket.emit("reqimage", 8);
     
     socket.on('img', function (val) {

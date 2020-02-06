@@ -101,14 +101,13 @@ function foundq(as){
 }
 
 function scol(id){
-    console.log('"'+id+'"');
     rek.searchFacesByImage({
     CollectionId: "thing", 
       FaceMatchThreshold: 85, 
       Image: {
        S3Object: {
         Bucket: "image1213", 
-        Name: '"'+id+'"'
+        Name: id
        }
       }, 
       MaxFaces: 1
@@ -132,8 +131,9 @@ function start(name){
     adtobucket(name)
     
     // NOTE IM NOT SURE HOW TO WAIT UNTIL FUNCTION IS COMPLETED... So we will use timeouts...
-    
-    scol(username);
+    setTimeout(function() {
+        scol(username);
+    },2000);
     
     setTimeout(function() {
         if (existsincol == 1){
@@ -143,7 +143,7 @@ function start(name){
         else if (existsincol == 2){
             console.log("Found in Col");
         }
-    },1000)
+    },3000)
     
     /**
     rek.searchFacesByImage({

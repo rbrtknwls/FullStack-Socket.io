@@ -15,17 +15,75 @@ const AWS = require('aws-sdk');
 const config = {
     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-    region: process.env.AWS_S3_REGION
+    region: "us-east-2"
 };
 
 const s3 = new AWS.S3(config);
+const rek = new AWS.Rekognition(config);
+function deletecol(col){
+    var params = {
+        CollectionId: col
+    };
+    rek.deleteCollection(params, function(err, data) {
+        if (err) console.log(err, err.stack); // an error occurred
+    });
+}
+function foundq(as){
+    var match = as["FaceMatches"][0];
+    console.log(as);
+    if (match == null){
+        console.log("NO MATCH, REGISER")
+    }else{
+        console.log("The matching ID is: " + match["Face"]["ExternalImageId"]);
+    }
+    
+}
+
+//STORE COLLECTION
+function start(){
+    
+    rek.searchFacesByImage({
+    CollectionId: "penis", 
+      FaceMatchThreshold: 95, 
+      Image: {
+       S3Object: {
+        Bucket: "image1213", 
+        Name: "Funny-man.png"
+       }
+      }, 
+      MaxFaces: 1
+    }, function(err, data) {
+       if (err){
+           console.log("not found")
+           rek.createCollection({CollectionId: "penis"});
+           rek.listCollections({}, function(err, data) {
+            if (err) console.log(err, err.stack); // an error occurred
+            else     console.log(data);  
+           });
+           start();
+       }
+       else{
+           foundq(data);
+       }
+    });
+}
 
 
-var pram = {
-    Bucket : 'image1213',
-};
+ 
+
+rek.listCollections({}, function(err, data) {
+if (err) console.log(err, err.stack); // an error occurred
+else     console.log(data);    
+});
+    
+deletecol("final")
+//start();
+
+
+
+// GET IMG URL
 function seimg(val){
-    s3.listObjects(pram, function(err, data) {
+    s3.listObjects({Bucket: 'image1213'}, function(err, data) {
       if (err) {
         console.log("Error", err);
       } else {
@@ -35,9 +93,7 @@ function seimg(val){
 }
 
 io.on('connection', function(socket){
-    console.log("connect");
     socket.on("reqimage", function (img) {
-        console.log(img);
         seimg(img);
     });
 });

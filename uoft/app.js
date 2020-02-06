@@ -8,6 +8,7 @@ const server = express()
   .use((req, res) => res.sendFile(INDEX, { root: __dirname }))
   .listen(PORT, () => console.log(`Listening on ${PORT}`));
 
+
 const io = socketIO(server);
 
 const AWS = require('aws-sdk');
@@ -20,6 +21,8 @@ const config = {
 
 const s3 = new AWS.S3(config);
 const rek = new AWS.Rekognition(config);
+
+// FUNCTIONS
 function deletecol(col){
     var params = {
         CollectionId: col
@@ -28,11 +31,37 @@ function deletecol(col){
         if (err) console.log(err, err.stack); // an error occurred
     });
 }
+
+function addcol(col){
+    rek.createCollection({CollectionId: col}, function(err,data){
+        if (err) console.log(err, err.stack);
+    });
+}
+
+function entperson(thin){
+    rek.indexFaces({
+      CollectionId: "thing", 
+      DetectionAttributes: [
+      ], 
+      ExternalImageId: thin, 
+      Image: {
+       S3Object: {
+        Bucket: "image1213", 
+        Name: "Funny-man.png"
+       }
+      }
+    }, function(err, data) {
+        if (err) console.log(err, err.stack); // an error occurred
+        else     console.log(data);
+    });
+}
 function foundq(as){
     var match = as["FaceMatches"][0];
     console.log(as);
     if (match == null){
-        console.log("NO MATCH, REGISER")
+        console.log("NO MATCH, REGISER");
+        entperson("jack");
+
     }else{
         console.log("The matching ID is: " + match["Face"]["ExternalImageId"]);
     }
@@ -40,10 +69,10 @@ function foundq(as){
 }
 
 //STORE COLLECTION
-function start(){
+function start(colnam){
     
     rek.searchFacesByImage({
-    CollectionId: "penis", 
+    CollectionId: "thing", 
       FaceMatchThreshold: 95, 
       Image: {
        S3Object: {
@@ -54,13 +83,14 @@ function start(){
       MaxFaces: 1
     }, function(err, data) {
        if (err){
-           console.log("not found")
-           rek.createCollection({CollectionId: "penis"});
+           console.log("not found");
+           addcol("thing");
            rek.listCollections({}, function(err, data) {
             if (err) console.log(err, err.stack); // an error occurred
             else     console.log(data);  
            });
            start();
+          
        }
        else{
            foundq(data);
@@ -76,8 +106,7 @@ if (err) console.log(err, err.stack); // an error occurred
 else     console.log(data);    
 });
     
-deletecol("a")
-//start();
+start("thing");
 
 
 

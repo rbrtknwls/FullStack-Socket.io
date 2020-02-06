@@ -26,6 +26,7 @@ const io = socketIO(server);
 
 var username = "shit";
 var existsincol = 0;
+var person_id = "";
 
 const rek = new AWS.Rekognition(config);
 
@@ -66,7 +67,7 @@ function adtobucket(name){
     });
     
 }
-function adtocol(_callback){
+function adtocol(id){
     rek.indexFaces({
       CollectionId: "thing", 
       DetectionAttributes: [
@@ -75,28 +76,19 @@ function adtocol(_callback){
       Image: {
        S3Object: {
         Bucket: "image1213", 
-        Name: "Funny-man.png"
+        Name: id
        }
       }
     }, function(err, data) {
-        if (err) console.log(err, err.stack); 
+        if (err) console.log("a");
         else{
-            _callback();
+            console.log("a");
         };
     });
 }
 function foundq(as){
     var match = as["FaceMatches"][0];
-    console.log(as);
-    if (match == null){
-        console.log("NO MATCH, REGISER");
-        entperson("jack");
-
-    }else{
-        console.log("The matching ID is: " + match["Face"]["ExternalImageId"]);
-        console.log(match);
-        addnewuser();
-    }
+    person_id = match["Face"]["ExternalImageId"];
     
 }
 
@@ -113,12 +105,13 @@ function scol(id){
       MaxFaces: 1
     }, function(err, data) {
        if (err){
-           console.log(err);
            existsincol = 1;
            
        }
        else{
+           console.log("hap");
            existsincol = 2;
+           foundq(data);
            
        }
     });
@@ -133,7 +126,7 @@ function start(name){
     // NOTE IM NOT SURE HOW TO WAIT UNTIL FUNCTION IS COMPLETED... So we will use timeouts...
     setTimeout(function() {
         scol(username);
-    },2000);
+    },3000);
     
     setTimeout(function() {
         if (existsincol == 1){
@@ -142,58 +135,23 @@ function start(name){
         }
         else if (existsincol == 2){
             console.log("Found in Col");
+            console.log(person_id);
+            io.emit('fid', username);
         }
-    },3000)
+    },5500)
     
-    /**
-    rek.searchFacesByImage({
-    CollectionId: "thing", 
-      FaceMatchThreshold: 85, 
-      Image: {
-       S3Object: {
-        Bucket: "image1213", 
-        Name: "b.png"
-       }
-      }, 
-      MaxFaces: 1
-    }, function(err, data) {
-       if (err){
-           console.log("not found");
-           addcol("thing");
-           rek.listCollections({}, function(err, data) {
-            if (err) console.log(err, err.stack); // an error occurred
-            else     console.log(data);  
-           });
-           start();
-          
-       }
-       else{
-           foundq(data);
-       }
-    });**/
 }
 
 
- 
-    
-start("thing");
 
 
 
-// GET IMG URL
-function seimg(val){
-    s3.listObjects({Bucket: 'image1213'}, function(err, data) {
-      if (err) {
-        console.log("Error", err);
-      } else {
-        io.emit('img', data["Contents"][val]["Key"]);
-      }
-    });
-}
 
 io.on('connection', function(socket){
+    console.log("Connection");
     socket.on("reqimage", function (img) {
-        seimg(img);
+        console.log("req sent");
+        start(img);
     });
 });
 

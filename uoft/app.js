@@ -25,7 +25,7 @@ const io = socketIO(server);
 
 
 var username = "shit";
-
+var existsincol = 0;
 
 const rek = new AWS.Rekognition(config);
 
@@ -56,7 +56,7 @@ function adtobucket(name){
     const params = {
       Bucket: "image1213",
       Key: username,
-      Body: fs.readFileSync("b.png")
+      Body: fs.readFileSync("a.png")
     };
     
     s3.putObject(params, function (err, data) {
@@ -100,15 +100,51 @@ function foundq(as){
     
 }
 
+function scol(id){
+    console.log('"'+id+'"');
+    rek.searchFacesByImage({
+    CollectionId: "thing", 
+      FaceMatchThreshold: 85, 
+      Image: {
+       S3Object: {
+        Bucket: "image1213", 
+        Name: '"'+id+'"'
+       }
+      }, 
+      MaxFaces: 1
+    }, function(err, data) {
+       if (err){
+           console.log(err);
+           existsincol = 1;
+           
+       }
+       else{
+           existsincol = 2;
+           
+       }
+    });
+}
+
 //STORE COLLECTION
 function start(name){
     
     // ADD TO S3
     adtobucket(name)
     
-    setInterval(function(){
-        console.log(username);
-    }, 100)
+    // NOTE IM NOT SURE HOW TO WAIT UNTIL FUNCTION IS COMPLETED... So we will use timeouts...
+    
+    scol(username);
+    
+    setTimeout(function() {
+        if (existsincol == 1){
+            console.log("Cant Find in Col... ADDING IT NOW");
+            
+        }
+        else if (existsincol == 2){
+            console.log("Found in Col");
+        }
+    },1000)
+    
     /**
     rek.searchFacesByImage({
     CollectionId: "thing", 

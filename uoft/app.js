@@ -1,5 +1,17 @@
+const AWS = require('aws-sdk');
+
 var express = require('express');
 var socketIO = require('socket.io');
+
+const fs = require('fs');
+
+const config = {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    region: "us-east-2"
+};
+
+const s3 = new AWS.S3(config);
 
 const PORT = process.env.PORT || 3000;
 const INDEX = '/index.html';
@@ -11,15 +23,10 @@ const server = express()
 
 const io = socketIO(server);
 
-const AWS = require('aws-sdk');
 
-const config = {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-    region: "us-east-2"
-};
+var username = "shit";
 
-const s3 = new AWS.S3(config);
+
 const rek = new AWS.Rekognition(config);
 
 // FUNCTIONS
@@ -37,8 +44,29 @@ function addcol(col){
         if (err) console.log(err, err.stack);
     });
 }
-
-function entperson(thin){
+function addnewuser(){
+    adtobucket("penis");
+    
+    setTimeout(function (){
+        console.log("ass");
+    },1000);
+}
+function adtobucket(name){
+    username = name + "|" + Date.now() +".png";
+    const params = {
+      Bucket: "image1213",
+      Key: username,
+      Body: fs.readFileSync("b.png")
+    };
+    
+    s3.putObject(params, function (err, data) {
+      if (err) {
+        console.log("Error: ", err);
+      }
+    });
+    
+}
+function adtocol(_callback){
     rek.indexFaces({
       CollectionId: "thing", 
       DetectionAttributes: [
@@ -51,8 +79,10 @@ function entperson(thin){
        }
       }
     }, function(err, data) {
-        if (err) console.log(err, err.stack); // an error occurred
-        else     console.log(data);
+        if (err) console.log(err, err.stack); 
+        else{
+            _callback();
+        };
     });
 }
 function foundq(as){
@@ -64,20 +94,29 @@ function foundq(as){
 
     }else{
         console.log("The matching ID is: " + match["Face"]["ExternalImageId"]);
+        console.log(match);
+        addnewuser();
     }
     
 }
 
 //STORE COLLECTION
-function start(colnam){
+function start(name){
     
+    // ADD TO S3
+    adtobucket(name)
+    
+    setInterval(function(){
+        console.log(username);
+    }, 100)
+    /**
     rek.searchFacesByImage({
     CollectionId: "thing", 
-      FaceMatchThreshold: 95, 
+      FaceMatchThreshold: 85, 
       Image: {
        S3Object: {
         Bucket: "image1213", 
-        Name: "Funny-man.png"
+        Name: "b.png"
        }
       }, 
       MaxFaces: 1
@@ -95,16 +134,11 @@ function start(colnam){
        else{
            foundq(data);
        }
-    });
+    });**/
 }
 
 
  
-
-rek.listCollections({}, function(err, data) {
-if (err) console.log(err, err.stack); // an error occurred
-else     console.log(data);    
-});
     
 start("thing");
 

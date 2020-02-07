@@ -1,18 +1,19 @@
-const AWS = require('aws-sdk');
+//const AWS = require('aws-sdk');
 
 var express = require('express');
 var socketIO = require('socket.io');
 var path = require('path');
 
 const fs = require('fs');
-
+/**
 const config = {
     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
     region: "us-east-2"
 };
-
-const s3 = new AWS.S3(config);
+**/
+const z = 1;
+//const s3 = new AWS.S3(config);
 
 const PORT = 3000;
 const INDEX = '/index.html';
@@ -30,7 +31,7 @@ server.get('/sign-in', function (req, res) {
 });
 
 server.listen(PORT);
-
+/**
 
 
 var username = "shit";
@@ -150,7 +151,7 @@ function start(name){
     },5500)
     
 }
-
+**/
 
 
 

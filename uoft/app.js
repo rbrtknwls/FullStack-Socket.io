@@ -25,7 +25,7 @@ server.get('/', function(req, res) {
 // other pages
 var publicPath = path.join(__dirname, 'public');
 
-server.get('/face', function (req, res) {
+server.get('/sign-in', function (req, res) {
   res.sendFile(path.join(publicPath + '/done.html'));
 });
 

@@ -1,83 +1,62 @@
 <!DOCTYPE HTML>
 <html>
-	<head>
-		<title>CredID</title>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<!--[if lte IE 8]><script src="assets/js/html5shiv.js"></script><![endif]-->
-		<link rel="stylesheet" href="assets/css/style.css" />
-		<!--[if lte IE 9]><link rel="stylesheet" href="assets/css/ie9.css" /><![endif]-->
-		<!--[if lte IE 8]><link rel="stylesheet" href="assets/css/ie8.css" /><![endif]-->
-		<link rel="icon" href="img/credidicon.png" >
+   <head>
+        <title>CredID</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <link rel="icon" href="img/credidicon.png" >
+    </head>
+    <style>
+        .centerdiv {
+          min-height: 100%; 
+          min-height: 100vh;    
 
-      <style>
-      /* NOTE: The styles were added inline because Prefixfree needs access to your styles and they must be inlined if they are on local disk! */
-      @import 'https://fonts.googleapis.com/css?family=Roboto+Mono:100';
-html,
-p {
-  font-family: 'Roboto Mono', monospace;
-
-}
-.container {
-  height: 100%;
-  width: 100%;
-  justify-content: center;
-  align-items: center;
-  display: flex;
-}
-.text {
-  font-weight: 100;
-  font-size: 20px;
-  color: #000;
-}
-.dud {
-  color: #a5a5a5;
-}
-
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        body{
+           height: 100%;
+            background-color: #ffffff;
+            background-image:linear-gradient(310deg, rgba(55,10,60,0.35) 30%, rgba(0, 228, 255, 0.35));
+            background-size: cover;
+            background-color: rgba(0, 0, 0, 0.2);
+            }
     </style>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prefixfree/1.0.7/prefixfree.min.js"></script>
-
-</head>
-
-	<body class="is-loading">
-
-			<div id="wrapper">
-
-				<!-- Main -->
-					<section id="main">
-						<header>
-							<span class="avatar"><img src="img/credidicon.png" alt="" /></span>
-							<h1>CredID</h1>
-
-							<p>  <div class="container">
-							  <div class="text"> Digital Identity stored on Ethereum. <br> Immediate access to Financial Services. </div>
-							  </div>
-
-							</p>
-
-						</header>
-
-						<footer>
-							<ul class="icons">
-								<button onclick="window.location.href = 'signup.html'">Start Now!</button>
-							</ul>
-						</footer>
-					</section>
-
-				<!-- Footer -->
-					<footer id="footer">
-						<ul class="copyright">
-							<li>&copy; CredID</li>
-						</ul>
-					</footer>
-
-			<script>
-				if ('addEventListener' in window) {
-					window.addEventListener('load', function() { document.body.className = document.body.className.replace(/\bis-loading\b/, ''); });
-					document.body.className += (navigator.userAgent.match(/(MSIE|rv:11\.0)/) ? ' is-ie' : '');
-				}
-
-			</script>
-	</body>
+    <body>
+    <div class="centerdiv">
+        <div class="jumbotron">
+            <div class = "row">
+                <div class="col-2">
+                    
+                </div>
+                <div class="col-8 align-self-center">
+                    <div class = "row">
+                        <div class="col-4 align-self-center">
+                            <hr class="my-4">
+                        </div>
+                        <div class="col-4 d-flex justify-content-center">
+                            <img src="https://image1213.s3.us-east-2.amazonaws.com/credidicon.png" class="img-fluid">
+                        </div>
+                        <div class="col-4 align-self-center">
+                            <hr class="my-4">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-2">
+                    
+                </div>
+              
+            </div>
+          <h1 class="display-4">CardID</h1>
+          <p class="lead">Tas</p>
+          <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>
+          <p class="lead">
+            <a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
+          </p>
+        </div> 
+    </div>
+          
+    </body>
 </html>

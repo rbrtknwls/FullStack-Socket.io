@@ -2,6 +2,7 @@ const AWS = require('aws-sdk');
 
 var express = require('express');
 var socketIO = require('socket.io');
+var path = require('path');
 
 const fs = require('fs');
 
@@ -13,15 +14,23 @@ const config = {
 
 const s3 = new AWS.S3(config);
 
-const PORT = process.env.PORT || 3000;
+const PORT = 3000;
 const INDEX = '/index.html';
 
-const server = express()
-  .use((req, res) => res.sendFile(INDEX, { root: __dirname }))
-  .listen(PORT, () => console.log(`Listening on ${PORT}`));
+server = express();
 
+server.get('/', function(req, res) {
+    res.sendFile(path.join(__dirname + '/index.html'));
+})
+// other pages
+var publicPath = path.join(__dirname, 'public');
 
-const io = socketIO(server);
+server.get('/face', function (req, res) {
+  res.sendFile(path.join(publicPath + '/done.html'));
+});
+
+server.listen(PORT);
+
 
 
 var username = "shit";
@@ -136,7 +145,7 @@ function start(name){
         else if (existsincol == 2){
             console.log("Found in Col");
             console.log(person_id);
-            io.emit('fid', username);
+            //io.emit('fid', username);
         }
     },5500)
     
@@ -147,13 +156,7 @@ function start(name){
 
 
 
-io.on('connection', function(socket){
-    console.log("Connection");
-    socket.on("reqimage", function (img) {
-        console.log("req sent");
-        start(img);
-    });
-});
+
 
 
 

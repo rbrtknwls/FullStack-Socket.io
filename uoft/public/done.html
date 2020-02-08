@@ -39,13 +39,18 @@
             height: 525px;
             background-color: #666;
         }
+        #video_overlays {
+            position:absolute;
+            z-index:300000;
+            text-align:center;
+        }
         
     </style>
 <body>
     
 <div class="centerdiv">
     <div class="jumbotron" style="padding-bottom: 20px">
-        <canvas id = "penis"></canvas>
+        <canvas id = "video_overlays" width = 700px height="525px"></canvas>
         <video autoplay="true" id="videoElement" width= 600px>
         </video>
         <div id="capturedimage"></div>
@@ -67,7 +72,7 @@
     
     setInterval(function(){
         getimg();
-    },1000)
+    },500)
     function getimg(){
         var canvas = document.createElement("canvas");
         canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
@@ -91,24 +96,29 @@
     }
     
     socket.on('returnbbox', function (bbox) {
-        var width = bbox["Width"];
-        var height = bbox["Height"];
-        var top = bbox["Top"];
-        var left = bbox["Left"];
+        var canvas = document.getElementById("video_overlays");
         
-        var canvas = document.createElement("canvas");
-        canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+        var width = bbox["Width"]*canvas.width/2;
+        var height = bbox["Height"]*canvas.height/2;
+        var top = bbox["Top"]*canvas.height;
+        var left = bbox["Left"]*canvas.width;
         
-        var img = document.createElement("img");
         
-        canvas.getContext('2d').beginPath();
-        canvas.getContext('2d').rect(canvas.width*left, canvas.height*top, canvas.width*width, canvas.height*height);
-        canvas.getContext('2d').stroke();
         
-        var data = canvas.toDataURL();
+        var ctx = canvas.getContext('2d');
         
-        img.src = data;
-        image.prepend(img);
+        ctx.clearRect(0,0,canvas.width, canvas.height)
+        
+        ctx.lineWidth = 5;
+        var gradient = ctx.createLinearGradient(0, 0, canvas.width/2, 0);
+        gradient.addColorStop("0", 'rgb(0, 228, 255)');
+        gradient.addColorStop("1.0", 'rgb(55,10,60)');
+        ctx.strokeStyle = gradient;
+        
+        ctx.beginPath();
+        ctx.ellipse(left + width, top + height, width, height,0,0,360);
+        ctx.stroke();
+
         console.log("-----");
         
     });

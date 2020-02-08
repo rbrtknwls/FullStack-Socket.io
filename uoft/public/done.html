@@ -42,10 +42,13 @@
         
     </style>
 <body>
+    
 <div class="centerdiv">
     <div class="jumbotron" style="padding-bottom: 20px">
+        <canvas id = "penis"></canvas>
         <video autoplay="true" id="videoElement" width= 600px>
         </video>
+        <div id="capturedimage"></div>
           <div class = "row " style="text-align: center;margin-top: 3vh">
             <div class="col-4 mx-auto">
                  <a class="btn btn-side btn-lg" style = "text-decoration-color: white" href="#" role="button">Take a Photo</a>   
@@ -55,17 +58,60 @@
           
 </div>
 </body>
-
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="/socket.io/socket.io.js"></script>
 <script>
-var video = document.querySelector("#videoElement");
-
-if (navigator.mediaDevices.getUserMedia) {
-  navigator.mediaDevices.getUserMedia({ video: true })
-    .then(function (stream) {
-      video.srcObject = stream;
-    });
+    var video = document.querySelector("#videoElement");
+    var image = $("#capturedimage");
+    var socket = io.connect();
     
-}
+    setInterval(function(){
+        getimg();
+    },1000)
+    function getimg(){
+        var canvas = document.createElement("canvas");
+        canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        var img = document.createElement("img");
+        var data = canvas.toDataURL();
+        
+        
+        var base64Image = data.replace(/^data:image\/png;base64,/, '');
+        socket.emit("fbbox", base64Image);
+    }
+    
+    
+
+    if (navigator.mediaDevices.getUserMedia) {
+      navigator.mediaDevices.getUserMedia({ video: true })
+        .then(function (stream) {
+          video.srcObject = stream;
+        });
+
+    }
+    
+    socket.on('returnbbox', function (bbox) {
+        var width = bbox["Width"];
+        var height = bbox["Height"];
+        var top = bbox["Top"];
+        var left = bbox["Left"];
+        
+        var canvas = document.createElement("canvas");
+        canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+        
+        var img = document.createElement("img");
+        
+        canvas.getContext('2d').beginPath();
+        canvas.getContext('2d').rect(canvas.width*left, canvas.height*top, canvas.width*width, canvas.height*height);
+        canvas.getContext('2d').stroke();
+        
+        var data = canvas.toDataURL();
+        
+        img.src = data;
+        image.prepend(img);
+        console.log("-----");
+        
+    });
 
 </script>
 </html>

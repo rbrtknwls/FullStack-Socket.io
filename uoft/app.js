@@ -12,8 +12,6 @@ var io = require('socket.io')(server);
 // CONSTANTS AND API KEYS
 const PORT = process.env.PORT || 3000;
 const config = {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
     region: "us-east-2"
 };
 const rek = new AWS.Rekognition(config)
@@ -51,7 +49,6 @@ io.on('connection', function(socket){
             if (err) console.log(err);
             else{
                 var bbox = data["SearchedFaceBoundingBox"];
-                console.log(bbox);
                 io.emit("returnbbox", bbox)
             }
         });

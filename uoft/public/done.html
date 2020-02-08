@@ -73,6 +73,7 @@
     setInterval(function(){
         getimg();
     },500)
+    
     function getimg(){
         var canvas = document.createElement("canvas");
         canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
@@ -87,13 +88,13 @@
     
     
 
-    if (navigator.mediaDevices.getUserMedia) {
-      navigator.mediaDevices.getUserMedia({ video: true })
-        .then(function (stream) {
-          video.srcObject = stream;
-        });
-
-    }
+    const hdConstraints = {
+      video: true;
+    };
+    
+    
+    navigator.mediaDevices.getUserMedia(hdConstraints).
+      then((stream) => {video.srcObject = stream});
     
     socket.on('returnbbox', function (bbox) {
         var canvas = document.getElementById("video_overlays");

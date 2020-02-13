@@ -26,8 +26,8 @@
         body{
            height: 100%;
             background-color: #ffffff;
-            background-image:linear-gradient(310deg, rgba(55,10,60,0.35) 30%, rgba(0, 228, 255, 0.35));
-            background-size: cover;
+            background-image:linear-gradient(270deg, rgba(55,10,60,0.35) 30%, rgba(0, 228, 255, 0.35));
+            background-size: auto;
             background-color: rgba(0, 0, 0, 0.2);
         }
         .btn-side{
@@ -60,24 +60,61 @@
             </div>
         </div>
         <div id = "mobile" style="display: none">
-                <h4 >To begin the Biometic Identification process please upload a photo of yourself.</h4>
-                
-                <input id = "img" class = "btn-side btn-lg" type="file" accept="image/*" style = "display: none">
-                <label class = "btn btn-side btn-lg" for = "img">Upload an image of your face!</label>
+            <h4 style = "text-align: center">To begin the Biometic Identification process please upload a photo of yourself.</h4>
+              <div class="row no-gutters" style=" margin-top: 5vh;">
+                <div id = "im" class="col-8" style="display: none; border: 1px solid black">
+                  <img id = "lamsaods" style = "max-height: 700px; max-width: 1000px; border-top-right-radius: 0;border-bottom-right-radius: 0;object-fit: cover;"class="card-img" alt="...">
+                </div>
+                <div id = "info" class="col-4" style="display: none; border: 1px solid black;border-left: 0px">
+                    <div class="card-header">
+                        <h2 style = "text-align: center" class="card-title">Information</h2>
+                    </div>
+                  <div id = "thing" class="card-body">
+                      <h5>Age:</h5>
+                      <h5>INFO:</h5>
+                  </div>
+                </div>
+              </div>
+            <input id = "img" class = "btn-side btn-lg" type="file" accept="image/*" style = "display: none;">
+            <label id = "imgmetadisp" style = "margin-top: 2vh; margin-left: 50%; transform: translate(-50%)" class = "btn btn-side btn-lg" for = "img">Load an Image of Your Face</label>
+            <a id = "sendimg" class="btn btn-side btn-lg" onclick = "passphoto()" style = "display: none; margin-top: 2vh; margin-left: 50%; transform: translate(-50%); text-decoration-color: white" role="button">Upload Biometric Data</a> 
         </div>
+
     
     </div>
+    
           
 </div>
+
 </body>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script>
+        
+        if (window.innerWidth <= 650){
+            document.getElementById("info").style.border = "1px solid black";
+            document.getElementById("info").style.border = "1px solid black";
+            document.getElementById("im").className = "col-12"
+            document.getElementById("info").className = "col-12";
+        }
+        window.onresize = function() {
+            if (window.innerWidth <= 650){
+                document.getElementById("info").style.border = "1px solid black";
+                document.getElementById("im").className = "col-12"
+                document.getElementById("info").className = "col-12";
+            }else{
+                document.getElementById("info").style.border = "border-left: 0px";
+                document.getElementById("im").className = "col-8"
+                document.getElementById("info").className = "col-4";
+            }
+        }
+    </script>
 <script src="/socket.io/socket.io.js"></script>
 <script>
     
     var socket = io.connect();
-    
-    
-    
+    var input = document.getElementById("img");
+    var preview = document.getElementById('preview');
+    var imag = document.getElementById("lamsaods");
     
     window.mobilecheck = function() {
       var check = false;
@@ -88,6 +125,7 @@
     
     if (ismobile){
         document.getElementById("mobile").style.display = "block";
+        input.addEventListener('change', updateImageDisplay);
     }else{
         navigator.getMedia = ( navigator.getUserMedia || 
                        navigator.webkitGetUserMedia ||
@@ -107,9 +145,75 @@
             
         }, function() {
             document.getElementById("mobile").style.display = "block";
+            input.addEventListener('change', updateImageDisplay);
         });
         
     }
+    
+    function updateImageDisplay() {
+      document.getElementById("imgmetadisp").style.display = "none";
+      document.getElementById("sendimg").style.display = "inline-block";
+      const curFiles = input.files;
+      if(curFiles.length === 0) {
+
+      } else {
+        document.getElementById("thing").innerHTML = "";
+        for(const file of curFiles) {
+          if(file.type == "image/jpeg" || file.type == "image/pjpeg" || file.type == "image/png") {
+              
+            imag.src = URL.createObjectURL(file);
+            imag.style.display = "block";
+            
+            const lmodified = document.createElement('h5');
+            if (file.lastModifiedDate == null){
+                lmodified.innerHTML = "a";
+                alert("PENIS");
+            }else{
+                lmodified.innerHTML = 'Time Created :' + file.lastModifiedDate;
+            }
+            document.getElementById("thing").append(lmodified);
+              
+            const typ = document.createElement('h5');
+            typ.innerHTML = 'Photo Type: ' + file.type;
+            document.getElementById("thing").append(typ);
+              
+            const size = document.createElement('h5');
+            size.innerHTML = 'Photo Size: ' + sizeToText(file.size);
+            document.getElementById("thing").append(size)
+              
+            const name = document.createElement('h5');
+            name.innerHTML = 'Photo Name: ' + file.name;
+            document.getElementById("thing").append(name)
+            
+            document.getElementById("info").style.display = "block";
+            document.getElementById("im").style.display = "block";
+          }else{
+            para.innerHTML = "Wrong File Type!";
+            document.getElementById("thing").append(para);
+          }
+          
+
+        }
+    }
+  }
+
+  function sizeToText(info){
+      if (info < 100){
+          return (info + "byte")
+      }
+      info = info/1000;
+      if (info <1000){
+          return(info.toFixed(1) + "Kb")  
+      }
+      info = info/1000;
+      if (info <1000){
+          return(info.toFixed(1) + "Mb")  
+      }
+      return(info.toFixed(1) + "Gb")
+  }
+  function passphoto(){
+      console.log("yee");
+  }
     
 </script>
 </html>

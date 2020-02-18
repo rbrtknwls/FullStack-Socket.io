@@ -9,8 +9,8 @@ var sslRedirect = require('heroku-ssl-redirect');
 // CONSTANTS AND API KEYS
 const PORT = process.env.PORT || 3000;
 const config = {
-    accessKeyId: "AKIA3C5KRETDNQ57P6VW",
-    secretAccessKey: "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",
+    accessKeyId: ,
+    secretAccessKey: ,
     region: "us-east-2"
 };
 

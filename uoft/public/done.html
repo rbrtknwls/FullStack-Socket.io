@@ -81,7 +81,7 @@
                     <label id = "imgmetadisp" style = "margin-top: 2vh; margin-left: 50%; transform: translate(-50%)" class = "btn btn-side btn-lg" for = "img">Load an Image of Your Face</label>
                 </div>
                 <div class = "col-md-6">
-                    <a id = "sendimg" class="btn btn-side btn-lg" onclick = "passphoto()" style = "display: none; margin-top: 2vh; margin-left: 50%; transform: translate(-50%); text-decoration-color: white" role="button">Upload Biometric Data</a> 
+                    <a id = "sendimg" class="btn btn-side btn-lg" style = "display: none; margin-top: 2vh; margin-left: 50%; transform: translate(-50%); text-decoration-color: white" role="button">Upload Biometric Data</a> 
                 </div>
             </div>
         </div>
@@ -115,6 +115,7 @@
         }
     </script>
 <script src="/socket.io/socket.io.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script>
     
     var socket = io.connect();
@@ -182,10 +183,6 @@
             }
             document.getElementById("thing").append(lmodified);
               
-            const typ = document.createElement('h5');
-            typ.innerHTML = 'Photo Type: ' + file.type;
-            document.getElementById("thing").append(typ);
-              
             const size = document.createElement('h5');
             size.innerHTML = 'Photo Size: ' + sizeToText(file.size);
             document.getElementById("thing").append(size)
@@ -193,14 +190,17 @@
             const name = document.createElement('h5');
             name.innerHTML = 'Photo Name: ' + file.name;
             document.getElementById("thing").append(name)
-              
-            navigator.geolocation.getCurrentPosition(showPosition);
-            function showPosition(pos){
-                const position = document.createElement('h5');
-                position.innerHTML = "Browser Location: " + pos.coords.latitude + ",\n" + pos.coords.longitude;
-                
-                document.getElementById("thing").append(position);
-            }
+            
+            const location = document.createElement('h5');
+            
+            idleButton("sendimg");
+            
+            navigator.geolocation.getCurrentPosition(function (loc){
+                location.innerHTML = "Browser Location: " + loc.coords.latitude.toFixed(5) +",\n" + loc.coords.longitude.toFixed(5);
+                restartButton("sendimg");
+            });
+            
+            document.getElementById("thing").append(location)
             
             
             document.getElementById("info").style.display = "block";
@@ -214,8 +214,15 @@
         }
     }
   }
-    
   /* DYNAMIC UI FUNCTIONS */
+  function idleButton(button){
+      document.getElementById("sendimg").style = "opacity: 0.65;margin-top: 2vh; margin-left: 50%; transform: translate(-50%); text-decoration-color: white";
+  }
+  
+  function restartButton(button){
+      document.getElementById("sendimg").style = "opacity: 1;margin-top: 2vh; margin-left: 50%; transform: translate(-50%); text-decoration-color: white";
+      button.onclick = "passphoto()";
+  }
   function sizeToText(info){
       if (info < 100){
           return (info + "byte")

@@ -94,6 +94,37 @@
 
 </body>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    
+
+<script>
+    /* --- User Cookies ---
+    |Reason|: In order to have the user signed in across all the pages we generate a unique sesion ID which corrisponds to if they are created.
+    |Format|: UniqueID (ASFAFASCAXaMKcaos) | State (Login In, Null) | Name
+    */
+    
+    
+    function SessionID(){
+        if (!sessionStorage.id){
+            sessionStorage.id = genRand(16) + "|Null|Null"
+        }
+    }
+    
+    // Generate a Random 16 Char string
+    function genRand(amount){
+        var RandomizedString = "";
+        for (var iter = 0; iter < amount; iter++){
+            RandomizedString += String.fromCharCode(Math.random()*26 +97)
+        }
+        return(RandomizedString);
+    }
+    
+    SessionID();
+    console.log(sessionStorage.id);
+
+</script>
+    
+    
+    
 <script>
         
         if (window.innerWidth <= 650){
@@ -124,6 +155,30 @@
     var imag = document.getElementById("lamsaods");
     
     const lmodified = document.createElement('h5');
+    
+    socket.on('auth', function (arr) {
+        switch (arr.substr(0,arr.indexOf("="))){
+                
+            case "login":
+                // Start by wiping the cookies, replace with the unqiue id)
+                sessionStorage.id = sessionStorage.id.substr(0,sessionStorage.id.indexOf("|"));
+                // Change the state to login
+                sessionStorage.id = sessionStorage.id + "|login"
+                // Add the name at the end
+                sessionStorage.id = sessionStorage.id + "|" + arr.substr(arr.indexOf("=")+1,arr.length);
+                    
+                console.log(sessionStorage.id)
+                break;
+            
+            case "nol":
+                console.log(arr)
+                break;
+            
+            
+            default:
+                console.log(arr.substr(0,3));
+        }
+    });
     
     window.mobilecheck = function() {
       var check = false;
@@ -217,11 +272,12 @@
   /* DYNAMIC UI FUNCTIONS */
   function idleButton(button){
       document.getElementById("sendimg").style = "opacity: 0.65;margin-top: 2vh; margin-left: 50%; transform: translate(-50%); text-decoration-color: white";
+      document.getElementById("sendimg").onclick = function(){};
   }
   
   function restartButton(button){
       document.getElementById("sendimg").style = "opacity: 1;margin-top: 2vh; margin-left: 50%; transform: translate(-50%); text-decoration-color: white";
-      button.onclick = "passphoto()";
+      document.getElementById("sendimg").onclick = passphoto;
   }
   function sizeToText(info){
       if (info < 100){
@@ -240,8 +296,7 @@
     
   /* SERVER COMMUNICATE FUNCTIONS */
   function passphoto(){
-      convtostring();
-      socket.emit("pass_server_image", imag.src, lmodified.innerHTML);
+      socket.emit("pass_server_image", convtostring(), lmodified.innerHTML, sessionStorage.id.substr(0,sessionStorage.id.indexOf("|")));
   }
   
   /* -- Image to Base64 --
@@ -257,7 +312,7 @@
       var base64Image = canvas.toDataURL();
       base64Image = base64Image.replace(/^data:image\/png;base64,/, '');
       
-      console.log(base64Image)
+      return base64Image;
       
   }
     

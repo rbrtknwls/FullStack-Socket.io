@@ -75,6 +75,29 @@
           
     </body>
     <script>
+    /* FORMAT
+        UniqueID (ASFAFASCAXaMKcaos) | State (Login In, Null) 
+    */
+    function SessionID(){
+        if (!sessionStorage.id){
+            sessionStorage.id = genRand(16) + "|Null"+"|Null"
+        }
+    }
+    
+    // Generate a Random 16 Char string
+    function genRand(amount){
+        var RandomizedString = "";
+        for (var iter = 0; iter < amount; iter++){
+            RandomizedString += String.fromCharCode(Math.random()*26 +97)
+        }
+        return(RandomizedString);
+    }
+    
+    SessionID();
+    console.log(sessionStorage.id);
+
+</script>
+    <script>
         if (window.innerWidth<= 511){
             document.getElementById("img").style.display = "none";
             document.getElementById("sep").style.display = "none";

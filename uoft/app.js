@@ -5,12 +5,11 @@ var path = require('path');
 var fs = require('fs');
 var atob = require('atob')
 var sslRedirect = require('heroku-ssl-redirect');
+var im = require('imagemagick');
 
 // CONSTANTS AND API KEYS
 const PORT = process.env.PORT || 3000;
 const config = {
-    accessKeyId: ,
-    secretAccessKey: ,
     region: "us-east-2"
 };
 
@@ -48,9 +47,18 @@ io.on('connection', function(socket){
     /* Recieve Image + Meta Data
     |Reason|: We need stringifyed data so that we can authenticate our users
     |Outcomes|: We will pass on the three outcomes found in our check functions sections*/
-    socket.on("pass_server_image", function (img, date) {
+    socket.on("pass_server_image", function (img, date,id) {
         console.log("Begin func: pass_server_image");
         console.log(date);
+        //console.log(img);
+        console.log(id);
+        
+        imgComp(getBinary(img));
+        
+        /// PLACE HOLDER
+        id = "thin";
+            
+        io.emit("auth", "login=" +id)
         
     });
     console.log("USER CONNECTED")
@@ -80,9 +88,40 @@ function getBinary(base64Image) {
             2) Image match not in System -> Create Account
             3) Invalid Image -> Back to /sign_in*/
 
-// 3
-function datecomp (imgdate){
-    console.log(imgdate);
+function imgComp (img){
+    var params = {
+      CollectionId: "v1", 
+      FaceMatchThreshold: 95, 
+      Image: {
+        Bytes: img
+      },
+      MaxFaces: 5
+     };
+    
+    rek.searchFacesByImage(params, function(err, data) {
+       if (err) console.log(err, err.stack); // an error occurred
+       else     console.log(data);
+    });
+}
+/* -- Debug Functions --
+|Reason|: We want see what collections we have! Cause I forget and I have alot
+|Outcomes|: 1) Prints the collections*/
+
+function printCol(){
+   rek.listCollections({}, function(err, data) {
+       if (err) console.log(err, err.stack); 
+       else     console.log(data); 
+   });
+}
+/*
+|Reason|: Lets make a new collections!
+|Outcomes|: 1) Makes a collection */
+
+function makeCol(name){
+   rek.createCollection({CollectionId: name}, function(err, data) {
+       if (err) console.log(err, err.stack); 
+       else     console.log(data);           
+ });
 }
 
 

@@ -10,6 +10,8 @@ var im = require('imagemagick');
 // CONSTANTS AND API KEYS
 const PORT = process.env.PORT || 3000;
 const config = {
+    accessKeyId: "",
+    secretAccessKey: "",
     region: "us-east-2"
 };
 
@@ -18,7 +20,7 @@ var app = express();
 var server = require('http').createServer(app);
 var io = require('socket.io')(server);
 const rek = new AWS.Rekognition(config)
-
+var states = "aa";
 
 
 
@@ -47,18 +49,19 @@ io.on('connection', function(socket){
     /* Recieve Image + Meta Data
     |Reason|: We need stringifyed data so that we can authenticate our users
     |Outcomes|: We will pass on the three outcomes found in our check functions sections*/
-    socket.on("pass_server_image", function (img, date,id) {
+    socket.on("pass_server_image", function (img, date,stuff) {
         console.log("Begin func: pass_server_image");
         console.log(date);
         //console.log(img);
-        console.log(id);
+        console.log(states);
         
         imgComp(getBinary(img));
         
-        /// PLACE HOLDER
-        id = "thin";
-            
-        io.emit("auth", "login=" +id)
+        setTimeout(function(){
+            io.emit("auth", "login=" +states);
+        },1000);
+        
+        
         
     });
     console.log("USER CONNECTED")
@@ -95,12 +98,19 @@ function imgComp (img){
       Image: {
         Bytes: img
       },
-      MaxFaces: 5
+      MaxFaces: 1
      };
     
     rek.searchFacesByImage(params, function(err, data) {
-       if (err) console.log(err, err.stack); // an error occurred
-       else     console.log(data);
+       if (err){
+           states = "NoFaceFound";
+       }else{
+           if (data["FaceMatches"][0] == null){
+               states = "NoMatch";
+           }else{
+               states = data["FaceMatches"][0];
+           }
+       }
     });
 }
 /* -- Debug Functions --
